@@ -1,5 +1,8 @@
 // Background script for LinkedLens Chrome Extension
 
+// Import LLM utilities
+importScripts('llm-utils.js');
+
 // Listen for extension installation
 chrome.runtime.onInstalled.addListener(() => {
     console.log('LinkedLens extension installed');

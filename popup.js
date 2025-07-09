@@ -4,6 +4,7 @@ const tabContents = document.querySelectorAll('.tab-content');
 const llmProviderSelect = document.getElementById('llm-provider');
 const providerConfigs = document.querySelectorAll('.provider-config');
 const llmForm = document.getElementById('llm-form');
+const testLLMBtn = document.getElementById('test-llm-btn');
 const addCategoryBtn = document.getElementById('add-category-btn');
 const categoriesList = document.getElementById('categories-list');
 const saveCategoriesBtn = document.getElementById('save-categories-btn');
@@ -13,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupTabs();
     setupLLMProviderSwitch();
     setupLLMForm();
+    setupTestButton();
     setupCategories();
     loadSavedData();
 });
@@ -95,6 +97,64 @@ function setupLLMForm() {
         } catch (error) {
             console.error('Error saving LLM config:', error);
             alert('Error saving configuration. Please try again.');
+        }
+    });
+}
+
+// Test LLM connection
+function setupTestButton() {
+    testLLMBtn.addEventListener('click', async () => {
+        testLLMBtn.disabled = true;
+        testLLMBtn.textContent = 'Testing...';
+        
+        try {
+            // First save the current form data
+            const formData = new FormData(llmForm);
+            const llmConfig = {
+                provider: formData.get('provider'),
+                config: {}
+            };
+            
+            // Get provider-specific configuration
+            switch (llmConfig.provider) {
+                case 'ollama':
+                    llmConfig.config = {
+                        url: formData.get('ollamaUrl') || 'http://localhost:11434',
+                        model: formData.get('ollamaModel')
+                    };
+                    break;
+                case 'gemini':
+                    llmConfig.config = {
+                        apiKey: formData.get('geminiApiKey'),
+                        model: formData.get('geminiModel')
+                    };
+                    break;
+                case 'openai':
+                    llmConfig.config = {
+                        apiKey: formData.get('openaiApiKey'),
+                        model: formData.get('openaiModel'),
+                        organization: formData.get('openaiOrg')
+                    };
+                    break;
+            }
+            
+            // Temporarily save config for testing
+            await chrome.storage.sync.set({ llmConfig });
+            
+            // Test the connection
+            const success = await LLMHelper.testConnection();
+            
+            if (success) {
+                showSuccessMessage('LLM connection test successful!');
+            } else {
+                throw new Error('Connection test failed');
+            }
+        } catch (error) {
+            console.error('LLM test failed:', error);
+            alert(`Connection test failed: ${error.message}`);
+        } finally {
+            testLLMBtn.disabled = false;
+            testLLMBtn.textContent = 'Test Connection';
         }
     });
 }

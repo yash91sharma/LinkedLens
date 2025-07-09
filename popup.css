@@ -133,7 +133,8 @@ input::placeholder {
 
 /* Buttons */
 .save-btn,
-.add-btn {
+.add-btn,
+.test-btn {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
@@ -145,9 +146,26 @@ input::placeholder {
   font-size: 14px;
 }
 
-.save-btn {
-  width: 100%;
+.test-btn {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  margin-left: 10px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
   margin-top: 20px;
+}
+
+.save-btn {
+  flex: 1;
+  margin-top: 0;
+}
+
+.test-btn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  transform: none !important;
 }
 
 .add-btn {
@@ -156,9 +174,14 @@ input::placeholder {
 }
 
 .save-btn:hover,
-.add-btn:hover {
+.add-btn:hover,
+.test-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.test-btn:hover:not(:disabled) {
+  box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
 }
 
 .save-btn:active,
