@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedLens Settings</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>LinkedLens</h1>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab-button active" data-tab="llm-config">LLM Configuration</button>
+      <button class="tab-button" data-tab="categories">Categories</button>
+    </nav>
+
+    <!-- LLM Configuration Tab -->
+    <div id="llm-config" class="tab-content active">
+      <form id="llm-form">
+        <div class="form-group">
+          <label for="llm-provider">LLM Provider:</label>
+          <select id="llm-provider" name="provider">
+            <option value="ollama">Ollama</option>
+            <option value="gemini">Gemini API</option>
+            <option value="openai">OpenAI API</option>
+          </select>
+        </div>
+
+        <!-- Ollama Configuration -->
+        <div id="ollama-config" class="provider-config">
+          <div class="form-group">
+            <label for="ollama-url">Ollama URL:</label>
+            <input type="url" id="ollama-url" name="ollamaUrl" placeholder="http://localhost:11434"
+              value="http://localhost:11434">
+          </div>
+          <div class="form-group">
+            <label for="ollama-model">Model Name:</label>
+            <input type="text" id="ollama-model" name="ollamaModel" placeholder="llama2, mistral, etc.">
+          </div>
+        </div>
+
+        <!-- Gemini Configuration -->
+        <div id="gemini-config" class="provider-config hidden">
+          <div class="form-group">
+            <label for="gemini-api-key">API Key:</label>
+            <input type="password" id="gemini-api-key" name="geminiApiKey" placeholder="Enter your Gemini API key">
+          </div>
+          <div class="form-group">
+            <label for="gemini-model">Model:</label>
+            <select id="gemini-model" name="geminiModel">
+              <option value="gemini-pro">Gemini Pro</option>
+              <option value="gemini-pro-vision">Gemini Pro Vision</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- OpenAI Configuration -->
+        <div id="openai-config" class="provider-config hidden">
+          <div class="form-group">
+            <label for="openai-api-key">API Key:</label>
+            <input type="password" id="openai-api-key" name="openaiApiKey" placeholder="Enter your OpenAI API key">
+          </div>
+          <div class="form-group">
+            <label for="openai-model">Model:</label>
+            <select id="openai-model" name="openaiModel">
+              <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+              <option value="gpt-4">GPT-4</option>
+              <option value="gpt-4-turbo">GPT-4 Turbo</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="openai-org">Organization ID (Optional):</label>
+            <input type="text" id="openai-org" name="openaiOrg" placeholder="org-xxxxxxxxxxxxxxxxxxxxxxxx">
+          </div>
+        </div>
+
+        <button type="submit" class="save-btn">Save LLM Configuration</button>
+      </form>
+    </div>
+
+    <!-- Categories Tab -->
+    <div id="categories" class="tab-content">
+      <div class="categories-header">
+        <h3>Content Categories</h3>
+        <button id="add-category-btn" class="add-btn">+ Add Category</button>
+      </div>
+
+      <div id="categories-list" class="categories-list">
+        <!-- Categories will be dynamically added here -->
+      </div>
+
+      <button id="save-categories-btn" class="save-btn">Save Categories</button>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>

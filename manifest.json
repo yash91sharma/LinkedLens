@@ -3,7 +3,12 @@
   "name": "LinkedLens",
   "version": "1.0.0",
   "description": "",
-  "permissions": [],
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": [
+    "https://api.openai.com/*",
+    "https://generativelanguage.googleapis.com/*",
+    "http://localhost:*/*"
+  ],
   "background": {
     "service_worker": "background.js"
   },
