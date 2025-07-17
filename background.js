@@ -3,10 +3,10 @@
 
 // Default categories for LinkedIn posts
 const DEFAULT_CATEGORIES = [
-    { name: 'Career', description: 'Posts about job opportunities, career growth, collaboration etc.' },
+    { name: 'Career', description: 'Posts about job opportunities, collaboration etc. Specifically where I can apply for a job.' },
     { name: 'Life Update', description: 'Posts about authors life update like new job, break, life event, achievement, project update etc.' },
     { name: 'Self Promotiom', description: 'Posts that are primarily self-promotional, often lacking actionable information or genuine updates. These are typically boastful, focused on personal branding, and intended mainly to boost engagement or profile visibility, rather than sharing meaningful achievements, events, or useful insights.' },
-    { name: 'Marketing', description: 'Marketing or selling of about a product, company, course etc.' },
+    { name: 'Marketing', description: 'Marketing or selling of a product, course etc.' },
 ];
 
 // Initialize default categories if none exist
