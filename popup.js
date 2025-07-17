@@ -92,8 +92,7 @@ function setupLLMForm() {
             case 'openai':
                 llmConfig.config = {
                     apiKey: formData.get('openaiApiKey'),
-                    model: formData.get('openaiModel'),
-                    organization: formData.get('openaiOrg')
+                    model: formData.get('openaiModel')
                 };
                 break;
         }
@@ -140,8 +139,7 @@ function setupTestButton() {
                 case 'openai':
                     llmConfig.config = {
                         apiKey: formData.get('openaiApiKey'),
-                        model: formData.get('openaiModel'),
-                        organization: formData.get('openaiOrg')
+                        model: formData.get('openaiModel')
                     };
                     break;
             }
@@ -273,7 +271,6 @@ async function loadSavedData() {
                 case 'openai':
                     if (config.apiKey) document.getElementById('openai-api-key').value = config.apiKey;
                     if (config.model) document.getElementById('openai-model').value = config.model;
-                    if (config.organization) document.getElementById('openai-org').value = config.organization;
                     break;
             }
         }
