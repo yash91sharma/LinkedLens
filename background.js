@@ -62,4 +62,39 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         });
         return true; // Keep message channel open for async response
     }
+
+    if (request.action === 'callOllama') {
+        const { config, systemPrompt, userPrompt } = request;
+        const url = `${config.url}/api/chat`;
+        
+        const requestBody = {
+            model: config.model,
+            messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: userPrompt }
+            ],
+            stream: false
+        };
+
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Ollama API error: ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            sendResponse({ success: true, data: data.message.content });
+        })
+        .catch(error => {
+            console.error('Error calling Ollama from background script:', error);
+            sendResponse({ success: false, error: error.message });
+        });
+
+        return true; // Indicates that the response is sent asynchronously
+    }
 });

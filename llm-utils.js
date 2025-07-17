@@ -50,37 +50,26 @@ class LLMHelper {
      * @returns {Promise<string>} - The response
      */
     static async callOllama(config, systemPrompt, userPrompt) {
-        const url = `${config.url}/api/chat`;
-        
-        const requestBody = {
-            model: config.model,
-            messages: [
+        return new Promise((resolve, reject) => {
+            chrome.runtime.sendMessage(
                 {
-                    role: "system",
-                    content: systemPrompt
+                    action: 'callOllama',
+                    config,
+                    systemPrompt,
+                    userPrompt
                 },
-                {
-                    role: "user",
-                    content: userPrompt
+                (response) => {
+                    if (chrome.runtime.lastError) {
+                        return reject(new Error(chrome.runtime.lastError.message));
+                    }
+                    if (response.success) {
+                        resolve(response.data);
+                    } else {
+                        reject(new Error(response.error));
+                    }
                 }
-            ],
-            stream: false
-        };
-
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestBody)
+            );
         });
-
-        if (!response.ok) {
-            throw new Error(`Ollama API error: ${response.status} ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        return data.message?.content || '';
     }
 
     /**
