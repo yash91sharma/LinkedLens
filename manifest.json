@@ -3,7 +3,7 @@
   "name": "LinkedLens",
   "version": "1.0.0",
   "description": "",
-  "permissions": ["storage", "activeTab"],
+  "permissions": ["storage", "activeTab", "tabs"],
   "host_permissions": [
     "https://api.openai.com/*",
     "https://generativelanguage.googleapis.com/*",
@@ -29,7 +29,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": ["https://www.linkedin.com/*"],
       "js": ["llm-utils.js", "content.js"]
     }
   ],

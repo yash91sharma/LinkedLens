@@ -33,6 +33,24 @@ header h1 {
   font-size: 24px;
   font-weight: 600;
   letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.status-indicator {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.status-indicator.active {
+  color: #10b981;
+}
+
+.status-indicator.inactive {
+  color: #f59e0b;
+}
+
+.status-indicator.error {
+  color: #ef4444;
 }
 
 /* Tabs */
@@ -312,4 +330,40 @@ input::placeholder {
 
 .success-message.show {
   display: block;
+}
+
+/* LinkedLens Post Tags (styles for content script) */
+.linkedlens-tag {
+  position: absolute !important;
+  top: 10px !important;
+  right: 10px !important;
+  color: white !important;
+  padding: 4px 8px !important;
+  border-radius: 12px !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  z-index: 1000 !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+.linkedlens-tag.not-processed {
+  background: #6b7280 !important;
+}
+
+.linkedlens-tag.processing {
+  background: #f59e0b !important;
+}
+
+.linkedlens-tag.error {
+  background: #ef4444 !important;
+}
+
+.linkedlens-tag.uncategorized {
+  background: #8b5cf6 !important;
+}
+
+/* Dynamic category colors */
+.linkedlens-tag[class*="category-"] {
+  background: #3b82f6 !important;
 }

@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupTestButton();
     setupCategories();
     loadSavedData();
+    checkLinkedInStatus();
 });
 
 // Tab functionality
@@ -263,8 +264,8 @@ async function loadSavedData() {
                 addCategory(category.name, category.description);
             });
         } else {
-            // Show empty state
-            showEmptyState();
+            // Add default categories for LinkedIn
+            addDefaultCategories();
         }
     } catch (error) {
         console.error('Error loading saved data:', error);
@@ -276,6 +277,24 @@ function showEmptyState() {
     emptyState.className = 'empty-state';
     emptyState.innerHTML = 'No categories added yet. Click "Add Category" to get started.';
     categoriesList.appendChild(emptyState);
+}
+
+function addDefaultCategories() {
+    // Add common LinkedIn post categories
+    const defaultCategories = [
+        { name: 'Technology', description: 'Tech news, software development, AI, programming, and digital trends' },
+        { name: 'Career', description: 'Job opportunities, career advice, professional development, and workplace tips' },
+        { name: 'Business', description: 'Business news, entrepreneurship, company updates, and market insights' },
+        { name: 'Industry News', description: 'Industry-specific news, trends, and updates' },
+        { name: 'Personal', description: 'Personal stories, achievements, and life updates' },
+        { name: 'Education', description: 'Learning resources, courses, certifications, and educational content' },
+        { name: 'Networking', description: 'Professional networking, events, and connection opportunities' },
+        { name: 'Thought Leadership', description: 'Opinion pieces, insights, and expert commentary' }
+    ];
+
+    defaultCategories.forEach(category => {
+        addCategory(category.name, category.description);
+    });
 }
 
 function showSuccessMessage(message) {
@@ -296,4 +315,26 @@ function showSuccessMessage(message) {
         successDiv.classList.remove('show');
         setTimeout(() => successDiv.remove(), 300);
     }, 3000);
+}
+
+// Check if we're on LinkedIn and show status
+async function checkLinkedInStatus() {
+    const statusIndicator = document.getElementById('status-indicator');
+    const statusText = document.getElementById('status-text');
+    
+    try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        
+        if (tab.url && tab.url.includes('linkedin.com')) {
+            statusIndicator.className = 'status-indicator active';
+            statusText.textContent = 'Active on LinkedIn';
+        } else {
+            statusIndicator.className = 'status-indicator inactive';
+            statusText.textContent = 'Not on LinkedIn';
+        }
+    } catch (error) {
+        console.error('Error checking LinkedIn status:', error);
+        statusIndicator.className = 'status-indicator error';
+        statusText.textContent = 'Status unknown';
+    }
 }

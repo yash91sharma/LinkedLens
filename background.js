@@ -1,153 +1,65 @@
-// Background script for LinkedLens Chrome Extension
+// LinkedLens Background Script
+// Simple background service worker for the extension
 
-// Import LLM utilities
-importScripts('llm-utils.js');
+// Default categories for LinkedIn posts
+const DEFAULT_CATEGORIES = [
+    { name: 'Technology', description: 'Tech news, software development, AI, programming, and digital trends' },
+    { name: 'Career', description: 'Job opportunities, career advice, professional development, and workplace tips' },
+    { name: 'Business', description: 'Business news, entrepreneurship, company updates, and market insights' },
+    { name: 'Industry News', description: 'Industry-specific news, trends, and updates' },
+    { name: 'Personal', description: 'Personal stories, achievements, and life updates' },
+    { name: 'Education', description: 'Learning resources, courses, certifications, and educational content' },
+    { name: 'Networking', description: 'Professional networking, events, and connection opportunities' },
+    { name: 'Thought Leadership', description: 'Opinion pieces, insights, and expert commentary' }
+];
 
-// Listen for extension installation
-chrome.runtime.onInstalled.addListener(() => {
-    console.log('LinkedLens extension installed');
-});
-
-// Function to get LLM configuration
-async function getLLMConfig() {
-    try {
-        const result = await chrome.storage.sync.get(['llmConfig']);
-        return result.llmConfig || null;
-    } catch (error) {
-        console.error('Error getting LLM config:', error);
-        return null;
-    }
-}
-
-// Function to get categories
-async function getCategories() {
+// Initialize default categories if none exist
+async function initializeDefaultCategories() {
     try {
         const result = await chrome.storage.sync.get(['categories']);
-        return result.categories || [];
-    } catch (error) {
-        console.error('Error getting categories:', error);
-        return [];
-    }
-}
-
-// Function to make LLM API call
-async function makeAPICall(prompt, context = '') {
-    const llmConfig = await getLLMConfig();
-    
-    if (!llmConfig) {
-        throw new Error('LLM configuration not found. Please configure in the popup.');
-    }
-    
-    const { provider, config } = llmConfig;
-    
-    switch (provider) {
-        case 'ollama':
-            return await callOllama(prompt, context, config);
-        case 'gemini':
-            return await callGemini(prompt, context, config);
-        case 'openai':
-            return await callOpenAI(prompt, context, config);
-        default:
-            throw new Error(`Unsupported LLM provider: ${provider}`);
-    }
-}
-
-// Ollama API call
-async function callOllama(prompt, context, config) {
-    const { url, model } = config;
-    
-    if (!model) {
-        throw new Error('Ollama model not configured');
-    }
-    
-    const response = await fetch(`${url}/api/generate`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            model: model,
-            prompt: context ? `Context: ${context}\n\nPrompt: ${prompt}` : prompt,
-            stream: false
-        })
-    });
-    
-    if (!response.ok) {
-        throw new Error(`Ollama API error: ${response.statusText}`);
-    }
-    
-    const data = await response.json();
-    return data.response;
-}
-
-// Gemini API call
-async function callGemini(prompt, context, config) {
-    const { apiKey, model } = config;
-    
-    if (!apiKey) {
-        throw new Error('Gemini API key not configured');
-    }
-    
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            contents: [{
-                parts: [{
-                    text: context ? `Context: ${context}\n\nPrompt: ${prompt}` : prompt
-                }]
-            }]
-        })
-    });
-    
-    if (!response.ok) {
-        throw new Error(`Gemini API error: ${response.statusText}`);
-    }
-    
-    const data = await response.json();
-    return data.candidates[0].content.parts[0].text;
-}
-
-// OpenAI API call
-async function callOpenAI(prompt, context, config) {
-    const { apiKey, model, organization } = config;
-    
-    if (!apiKey) {
-        throw new Error('OpenAI API key not configured');
-    }
-    
-    const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-    };
-    
-    if (organization) {
-        headers['OpenAI-Organization'] = organization;
-    }
-    
-    const messages = [
-        {
-            role: 'user',
-            content: context ? `Context: ${context}\n\nPrompt: ${prompt}` : prompt
+        if (!result.categories || result.categories.length === 0) {
+            const categoriesWithIds = DEFAULT_CATEGORIES.map((category, index) => ({
+                id: `default-${index}`,
+                name: category.name,
+                description: category.description
+            }));
+            
+            await chrome.storage.sync.set({ categories: categoriesWithIds });
+            console.log('LinkedLens: Default categories initialized');
         }
-    ];
-    
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({
-            model: model,
-            messages: messages,
-            max_tokens: 1000
-        })
-    });
-    
-    if (!response.ok) {
-        throw new Error(`OpenAI API error: ${response.statusText}`);
+    } catch (error) {
+        console.error('Error initializing default categories:', error);
     }
-    
-    const data = await response.json();
-    return data.choices[0].message.content;
 }
+
+// Listen for extension installation
+chrome.runtime.onInstalled.addListener(async () => {
+    console.log('LinkedLens extension installed');
+    await initializeDefaultCategories();
+});
+
+// Handle extension icon clicks
+chrome.action.onClicked.addListener((tab) => {
+    // This will open the popup, no additional action needed
+    console.log('LinkedLens icon clicked');
+});
+
+// Listen for tab updates to potentially refresh content script
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (changeInfo.status === 'complete' && tab.url && tab.url.includes('linkedin.com')) {
+        console.log('LinkedIn page loaded, content script should be active');
+    }
+});
+
+// Listen for messages from content script
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === 'initializeDefaultCategories') {
+        initializeDefaultCategories().then(() => {
+            sendResponse({ success: true });
+        }).catch(error => {
+            console.error('Error initializing default categories:', error);
+            sendResponse({ success: false, error: error.message });
+        });
+        return true; // Keep message channel open for async response
+    }
+});
