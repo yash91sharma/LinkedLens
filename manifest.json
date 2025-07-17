@@ -32,6 +32,5 @@
       "matches": ["https://www.linkedin.com/*"],
       "js": ["llm-utils.js", "content.js"]
     }
-  ],
-  "options_page": "options.html"
+  ]
 }
