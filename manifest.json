@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "LinkedLens",
   "version": "1.0.0",
-  "description": "",
+  "description": "Browse Linkedin with the power of AI",
   "permissions": ["storage", "activeTab", "tabs"],
   "host_permissions": [
     "https://api.openai.com/*",
