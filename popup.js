@@ -1,4 +1,3 @@
-// DOM Elements
 const tabButtons = document.querySelectorAll('.tab-button');
 const tabContents = document.querySelectorAll('.tab-content');
 const llmProviderSelect = document.getElementById('llm-provider');
@@ -300,16 +299,10 @@ function showEmptyState() {
 }
 
 function addDefaultCategories() {
-    // Add common LinkedIn post categories
     const defaultCategories = [
-        { name: 'Technology', description: 'Tech news, software development, AI, programming, and digital trends' },
-        { name: 'Career', description: 'Job opportunities, career advice, professional development, and workplace tips' },
-        { name: 'Business', description: 'Business news, entrepreneurship, company updates, and market insights' },
-        { name: 'Industry News', description: 'Industry-specific news, trends, and updates' },
-        { name: 'Personal', description: 'Personal stories, achievements, and life updates' },
-        { name: 'Education', description: 'Learning resources, courses, certifications, and educational content' },
-        { name: 'Networking', description: 'Professional networking, events, and connection opportunities' },
-        { name: 'Thought Leadership', description: 'Opinion pieces, insights, and expert commentary' }
+        { name: 'Job search', description: 'Post about any kind of job opportunity or a position' },
+        { name: 'Career update', description: 'Update about any change or update in the career, new job, project or collaboration.' },
+        { name: 'Self promotion', description: 'Posts where the author primarily praises themselves, highlights personal qualities, or boasts about achievements without sharing any actionable career, job, or project updates. These posts focus on self-image or personal branding rather than providing useful information or opportunities.' }
     ];
 
     defaultCategories.forEach(category => {
