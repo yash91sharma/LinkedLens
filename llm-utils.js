@@ -16,17 +16,26 @@ class LLMHelper {
             }
 
             const { provider, config } = result.llmConfig;
+            
+            // Track LLM call
+            await this.trackLLMCall();
 
+            let response;
             switch (provider) {
                 case 'ollama':
-                    return await this.callOllama(config, systemPrompt, userPrompt);
+                    response = await this.callOllama(config, systemPrompt, userPrompt);
+                    break;
                 case 'gemini':
-                    return await this.callGemini(config, systemPrompt, userPrompt);
+                    response = await this.callGemini(config, systemPrompt, userPrompt);
+                    break;
                 case 'openai':
-                    return await this.callOpenAI(config, systemPrompt, userPrompt);
+                    response = await this.callOpenAI(config, systemPrompt, userPrompt);
+                    break;
                 default:
                     throw new Error(`Unsupported LLM provider: ${provider}`);
             }
+            
+            return response;
         } catch (error) {
             console.error('Error calling LLM:', error);
             throw error;
@@ -184,6 +193,12 @@ class LLMHelper {
         }
 
         const data = await response.json();
+        
+        // Track token usage if available
+        if (data.usage) {
+            await this.trackTokenUsage(data.usage.prompt_tokens || 0, data.usage.completion_tokens || 0);
+        }
+        
         return data.choices?.[0]?.message?.content || '';
     }
 
@@ -237,6 +252,57 @@ class LLMHelper {
                 return !!(providerConfig.apiKey && providerConfig.model);
             default:
                 return false;
+        }
+    }
+
+    /**
+     * Track an LLM call in statistics
+     */
+    static async trackLLMCall() {
+        try {
+            const result = await chrome.storage.sync.get(['linkedlensStats']);
+            const stats = result.linkedlensStats || { postsProcessed: 0, llmCalls: 0, inputTokens: 0, outputTokens: 0 };
+            
+            stats.llmCalls = (stats.llmCalls || 0) + 1;
+            
+            await chrome.storage.sync.set({ linkedlensStats: stats });
+        } catch (error) {
+            console.error('Error tracking LLM call:', error);
+        }
+    }
+
+    /**
+     * Track token usage in statistics
+     * @param {number} inputTokens - Number of input tokens used
+     * @param {number} outputTokens - Number of output tokens used
+     */
+    static async trackTokenUsage(inputTokens, outputTokens) {
+        try {
+            const result = await chrome.storage.sync.get(['linkedlensStats']);
+            const stats = result.linkedlensStats || { postsProcessed: 0, llmCalls: 0, inputTokens: 0, outputTokens: 0 };
+            
+            stats.inputTokens = (stats.inputTokens || 0) + inputTokens;
+            stats.outputTokens = (stats.outputTokens || 0) + outputTokens;
+            
+            await chrome.storage.sync.set({ linkedlensStats: stats });
+        } catch (error) {
+            console.error('Error tracking token usage:', error);
+        }
+    }
+
+    /**
+     * Track a processed post in statistics
+     */
+    static async trackProcessedPost() {
+        try {
+            const result = await chrome.storage.sync.get(['linkedlensStats']);
+            const stats = result.linkedlensStats || { postsProcessed: 0, llmCalls: 0, inputTokens: 0, outputTokens: 0 };
+            
+            stats.postsProcessed = (stats.postsProcessed || 0) + 1;
+            
+            await chrome.storage.sync.set({ linkedlensStats: stats });
+        } catch (error) {
+            console.error('Error tracking processed post:', error);
         }
     }
 }

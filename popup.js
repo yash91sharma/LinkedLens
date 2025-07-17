@@ -8,6 +8,12 @@ const testLLMBtn = document.getElementById('test-llm-btn');
 const addCategoryBtn = document.getElementById('add-category-btn');
 const categoriesList = document.getElementById('categories-list');
 const saveCategoriesBtn = document.getElementById('save-categories-btn');
+const refreshStatsBtn = document.getElementById('refresh-stats-btn');
+const resetStatsBtn = document.getElementById('reset-stats-btn');
+const postsProcessedEl = document.getElementById('posts-processed');
+const llmCallsEl = document.getElementById('llm-calls');
+const inputTokensEl = document.getElementById('input-tokens');
+const outputTokensEl = document.getElementById('output-tokens');
 
 // Initialize the popup
 document.addEventListener('DOMContentLoaded', () => {
@@ -16,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupLLMForm();
     setupTestButton();
     setupCategories();
+    setupStatus();
     loadSavedData();
     checkLinkedInStatus();
 });
@@ -162,16 +169,29 @@ function setupTestButton() {
 
 // Categories functionality
 function setupCategories() {
-    addCategoryBtn.addEventListener('click', addCategory);
-    saveCategoriesBtn.addEventListener('click', saveCategories);
-    
-    // Event delegation for remove buttons
-    categoriesList.addEventListener('click', (e) => {
-        if (e.target.classList.contains('remove-category')) {
-            const categoryId = e.target.getAttribute('data-category-id');
-            removeCategory(categoryId);
+    addCategoryBtn.addEventListener('click', () => {
+        addCategory();
+    });
+
+    saveCategoriesBtn.addEventListener('click', () => {
+        saveCategories();
+    });
+}
+
+// Status tab functionality
+function setupStatus() {
+    refreshStatsBtn.addEventListener('click', () => {
+        loadStatistics();
+    });
+
+    resetStatsBtn.addEventListener('click', async () => {
+        if (confirm('Are you sure you want to reset all statistics? This action cannot be undone.')) {
+            await resetStatistics();
         }
     });
+    
+    // Load initial statistics
+    loadStatistics();
 }
 
 function addCategory(name = '', description = '') {
@@ -267,6 +287,9 @@ async function loadSavedData() {
             // Add default categories for LinkedIn
             addDefaultCategories();
         }
+        
+        // Load statistics
+        loadStatistics();
     } catch (error) {
         console.error('Error loading saved data:', error);
     }
@@ -338,3 +361,47 @@ async function checkLinkedInStatus() {
         statusText.textContent = 'Status unknown';
     }
 }
+
+// Load and display statistics
+async function loadStatistics() {
+    try {
+        const result = await chrome.storage.sync.get(['linkedlensStats']);
+        const stats = result.linkedlensStats || { postsProcessed: 0, llmCalls: 0, inputTokens: 0, outputTokens: 0 };
+        
+        postsProcessedEl.textContent = stats.postsProcessed || 0;
+        llmCallsEl.textContent = stats.llmCalls || 0;
+        inputTokensEl.textContent = stats.inputTokens || 0;
+        outputTokensEl.textContent = stats.outputTokens || 0;
+    } catch (error) {
+        console.error('Error loading statistics:', error);
+        postsProcessedEl.textContent = 'Error';
+        llmCallsEl.textContent = 'Error';
+        inputTokensEl.textContent = 'Error';
+        outputTokensEl.textContent = 'Error';
+    }
+}
+
+// Reset all statistics
+async function resetStatistics() {
+    try {
+        const resetStats = { postsProcessed: 0, llmCalls: 0, inputTokens: 0, outputTokens: 0 };
+        await chrome.storage.sync.set({ linkedlensStats: resetStats });
+        
+        postsProcessedEl.textContent = '0';
+        llmCallsEl.textContent = '0';
+        inputTokensEl.textContent = '0';
+        outputTokensEl.textContent = '0';
+        
+        showSuccessMessage('Statistics reset successfully!');
+    } catch (error) {
+        console.error('Error resetting statistics:', error);
+        alert('Error resetting statistics. Please try again.');
+    }
+}
+
+// Listen for storage changes to update statistics in real-time
+chrome.storage.onChanged.addListener((changes, namespace) => {
+    if (namespace === 'sync' && changes.linkedlensStats) {
+        loadStatistics();
+    }
+});

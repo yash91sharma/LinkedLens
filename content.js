@@ -345,9 +345,15 @@ class LinkedLensProcessor {
             if (category) {
                 console.log(`LinkedLens: Categorized post ${id} as: ${category.name}`);
                 this.addPostTag(element, `category-${category.id}`, category.name);
+                
+                // Track successful post processing
+                await LLMHelper.trackProcessedPost();
             } else {
                 console.log(`LinkedLens: Could not categorize post ${id}, marking as uncategorized`);
                 this.addPostTag(element, 'uncategorized', 'Uncategorized');
+                
+                // Track successful post processing (even if uncategorized)
+                await LLMHelper.trackProcessedPost();
             }
 
         } catch (error) {

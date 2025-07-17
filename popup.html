@@ -20,6 +20,7 @@
     <nav class="tabs">
       <button class="tab-button active" data-tab="llm-config">LLM Configuration</button>
       <button class="tab-button" data-tab="categories">Categories</button>
+      <button class="tab-button" data-tab="status">Status</button>
     </nav>
 
     <!-- LLM Configuration Tab -->
@@ -106,6 +107,38 @@
       </div>
 
       <button id="save-categories-btn" class="save-btn">Save Categories</button>
+    </div>
+
+    <!-- Status Tab -->
+    <div id="status" class="tab-content">
+      <h3>Processing Statistics</h3>
+
+      <div class="stats-container">
+        <div class="stat-item">
+          <span class="stat-label">Posts Processed:</span>
+          <span id="posts-processed" class="stat-value">0</span>
+        </div>
+
+        <div class="stat-item">
+          <span class="stat-label">LLM Calls Made:</span>
+          <span id="llm-calls" class="stat-value">0</span>
+        </div>
+
+        <div class="stat-item">
+          <span class="stat-label">Input Tokens Used:</span>
+          <span id="input-tokens" class="stat-value">0</span>
+        </div>
+
+        <div class="stat-item">
+          <span class="stat-label">Output Tokens Used:</span>
+          <span id="output-tokens" class="stat-value">0</span>
+        </div>
+      </div>
+
+      <div class="stats-actions">
+        <button id="refresh-stats-btn" class="refresh-btn">Refresh Stats</button>
+        <button id="reset-stats-btn" class="reset-btn">Reset Stats</button>
+      </div>
     </div>
   </div>
 
