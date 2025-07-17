@@ -3,14 +3,10 @@
 
 // Default categories for LinkedIn posts
 const DEFAULT_CATEGORIES = [
-    { name: 'Technology', description: 'Tech news, software development, AI, programming, and digital trends' },
-    { name: 'Career', description: 'Job opportunities, career advice, professional development, and workplace tips' },
-    { name: 'Business', description: 'Business news, entrepreneurship, company updates, and market insights' },
-    { name: 'Industry News', description: 'Industry-specific news, trends, and updates' },
-    { name: 'Personal', description: 'Personal stories, achievements, and life updates' },
-    { name: 'Education', description: 'Learning resources, courses, certifications, and educational content' },
-    { name: 'Networking', description: 'Professional networking, events, and connection opportunities' },
-    { name: 'Thought Leadership', description: 'Opinion pieces, insights, and expert commentary' }
+    { name: 'Career', description: 'Posts about job opportunities, career growth, collaboration etc.' },
+    { name: 'Life Update', description: 'Posts about authors life update like new job, break, life event, achievement, project update etc.' },
+    { name: 'Self Promotiom', description: 'Posts that are primarily self-promotional, often lacking actionable information or genuine updates. These are typically boastful, focused on personal branding, and intended mainly to boost engagement or profile visibility, rather than sharing meaningful achievements, events, or useful insights.' },
+    { name: 'Marketing', description: 'Marketing or selling of about a product, company, course etc.' },
 ];
 
 // Initialize default categories if none exist
