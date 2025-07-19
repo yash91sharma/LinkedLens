@@ -6,6 +6,10 @@ LinkedLens is a simple LinkedIn browsing companion designed to enhance your Link
 
 You define the categories and describe them.
 
+Once the extension is running, it will automatically categorize LinkedIn posts and place a colored tag in the top right corner of each post, showing which category it belongs to.
+
+![LinkedLens in action](example.png)
+
 Note: LinkedLens is a Chrome extension.
 
 ## Motivation
