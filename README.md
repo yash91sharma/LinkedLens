@@ -6,6 +6,8 @@ LinkedLens is a simple LinkedIn browsing companion designed to enhance your Link
 
 You define the categories and describe them.
 
+Note: LinkedLens is a Chrome extension.
+
 ## Motivation
 
 LinkedIn can be useful, but I find some categories of posts really annoying and spammy, and thought of making my LinkedIn experience better. So I built this extension and decided to share it.
@@ -37,7 +39,12 @@ Since this extension is not published on the Chrome Web Store, you'll need to lo
 
 5. The extension will now be installed and ready to use
 
-6. If using Ollama as your LLM backend, prepare it to accept requests from the extension:
+6. Click on the LinkedLens icon in your chrome toolbar, then:
+   - Define your categories (what kinds of posts you want to identify)
+   - Select an LLM backend (Ollama, OpenAI API, or Gemini API)
+   - Configure your API keys if using OpenAI or Gemini
+
+7. If using Ollama as your LLM backend, prepare it to accept requests from the extension:
    ```bash
    OLLAMA_ORIGINS=chrome-extension://<your-extension-id> ollama serve
    ```
